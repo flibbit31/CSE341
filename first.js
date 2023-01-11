@@ -6,6 +6,6 @@ const requestListener = function (req, res) {
 }
 
 const server = http.createServer(requestListener);
-server.listen(8080, "localhost", () => {
+server.listen(8080, 'localhost', () => {
     console.log("Running my first server on http://localhost:8080");
 });
