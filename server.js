@@ -23,20 +23,9 @@ const port = process.env.PORT || 8080;
 const {MongoClient} = require('mongodb');
 const ObjectId = require('mongodb').ObjectId;
 
-
-
-//connect to databse
-
-
 init();
 
 async function init() {
-    //connect to MongoDB
-    //const client = await databaseConnect();
-
-    /*const databases = await client.db().admin().listDatabases();
-    console.log(databases);*/
-
     const client = await databaseConnect();
 
     app.get("/contacts", async function (req, res) {
