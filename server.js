@@ -20,62 +20,64 @@ const express = require('express');
 const app = express();
 const port = process.env.PORT || 8080;
 
-const {MongoClient} = require('mongodb');
+const { MongoClient } = require('mongodb');
 const ObjectId = require('mongodb').ObjectId;
 
 init();
 
 async function init() {
-    const client = await databaseConnect();
+  const client = await databaseConnect();
 
-    app.get("/contacts", async function (req, res) {
-        //get contacts collection
-        const contacts = await client.db("contacts").collection("contacts");
+  app.get('/contacts', async function (req, res) {
+    //get contacts collection
+    const contacts = await client.db('contacts').collection('contacts');
 
-        //retrieve particular document with this id
-        if (req.query.id) {
-            console.log("id sent.");
-            const id = req.query.id;
+    //retrieve particular document with this id
+    if (req.query.id) {
+      console.log('id sent.');
+      const id = req.query.id;
 
-            const foundDoc = await contacts.find({
-                _id: ObjectId(id)
-            }).toArray();
+      const foundDoc = await contacts
+        .find({
+          _id: ObjectId(id)
+        })
+        .toArray();
 
-            console.log(foundDoc);
-            res.json(foundDoc);
-        }
+      console.log(foundDoc);
+      res.json(foundDoc);
+    }
 
-        //retrieve first 100 documents
-        else {
-            //get first 100 contacts
-            
-            contacts.find({}).limit(100)
-            .toArray(function (error, result) {
-                if (error) {
-                    res.status(400).send("Error getting contacts");
-                }
+    //retrieve first 100 documents
+    else {
+      //get first 100 contacts
 
-                else {
-                    res.json(result);
-                }
-            
-            });
-        }
-    });
+      contacts
+        .find({})
+        .limit(100)
+        .toArray(function (error, result) {
+          if (error) {
+            res.status(400).send('Error getting contacts');
+          } else {
+            res.json(result);
+          }
+        });
+    }
+  });
 
-    app.listen(port, () => console.log('Started Server listening on port ' + port));
+  app.listen(port, () => console.log('Started Server listening on port ' + port));
 }
 
 async function databaseConnect() {
-    const client = new MongoClient(process.env.CONNECTION, { useNewUrlParser: true, useUnifiedtopology: true});
+  const client = new MongoClient(process.env.CONNECTION, {
+    useNewUrlParser: true,
+    useUnifiedtopology: true
+  });
 
-    try {
-        await client.connect();
-        return client;
-    }
-
-    catch (e) {
-        console.error(e);
-        client.close();
-    }
+  try {
+    await client.connect();
+    return client;
+  } catch (e) {
+    console.error(e);
+    client.close();
+  }
 }
