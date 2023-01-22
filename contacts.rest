@@ -1,22 +1,80 @@
-##PRODUCTION 
+###PRODUCTION 
 
-#get all contacts
+###get all contacts
 GET https://cse341-j0ct.onrender.com/contacts
 
-#get contact with the queried id
+###get contact with the queried id
 
 GET https://cse341-j0ct.onrender.com/contacts?id=63c3aa90028ff82c206245d1
 
+###insert new contact
 
-#DEVELOPMENT
+POST https://cse341-j0ct.onrender.com/contacts HTTP/1.1
+content-type: application/json
 
-#get all contacts
+{
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "jdoe@email.com",
+    "favoriteColor": "Purple",
+    "birthday": "1970-01-01"
+}
+
+### update contact by id
+PUT https://cse341-j0ct.onrender.com/contacts?id=63ccb3f3242fbf0981658a82 HTTP/1.1
+content-type: application/json
+
+{
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "jdoe@email.com",
+    "favoriteColor": "Purple",
+    "birthday": "1970-01-02"
+}
+
+###delete contact with the queried id
+
+DELETE https://cse341-j0ct.onrender.com/contacts?id=63c3aa90028ff82c206245d1 HTTP/1.1
+
+
+
+
+
+###DEVELOPMENT
+
+###get all contacts
 
 GET http://localhost:8080/contacts
 
-#get contact with the queried id
+###get contact with the queried id
 
 GET http://localhost:8080/contacts?id=63c3aa90028ff82c206245d1
 
+#### insert new contact
 
+POST http://localhost:8080/contacts HTTP/1.1
+content-type: application/json
 
+{
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "jdoe@email.com",
+    "favoriteColor": "Purple",
+    "birthday": "1970-01-01"
+}
+
+### update contact by id
+PUT http://localhost:8080/contacts?id=63ccb3f3242fbf0981658a82 HTTP/1.1
+content-type: application/json
+
+{
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "jdoe@email.com",
+    "favoriteColor": "Purple",
+    "birthday": "1970-01-02"
+}
+
+###delete contact with the queried id
+
+DELETE http://localhost:8080/contacts?id=63c3aa90028ff82c206245d1 HTTP/1.1

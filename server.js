@@ -20,8 +20,12 @@ const express = require('express');
 const app = express();
 const port = process.env.PORT || 8080;
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 const { MongoClient } = require('mongodb');
 const ObjectId = require('mongodb').ObjectId;
+
 
 init();
 
@@ -64,7 +68,100 @@ async function init() {
     }
   });
 
+  app.put('/contacts', async function (req, res) {
+    const contacts = await client.db('contacts').collection('contacts');
+
+    //set operator needed for updateOne function
+    const contact = req.body;
+    const contactSet = { $set: req.body };
+
+    if(/*validateContact(contact)*/true) {
+      if(req.query.id) {
+        const id = req.query.id;
+        const queryById = 
+        {
+            _id: ObjectId(id)
+        };
+
+        try {
+          contacts.updateOne(queryById, contactSet);
+          res.status(200).send("Contact successfully updated.");
+        }
+        catch (e) {
+          res.send("Error updating contact: " + e);
+        }
+      }
+  
+      else {
+        res.status(400).send("id query parameter required for PUT");
+      }
+    }
+
+    else {
+      res.status(400).send("Contact is not formatted correctly.");
+    }
+    
+  })
+
+  app.post('/contacts', async function (req, res) {
+    //get contacts collection
+    const contacts = await client.db('contacts').collection('contacts');
+
+    const contact = req.body;
+    if (validateContact(contact)) {
+      try {
+        contacts.insertOne(contact);
+        res.status(201).json(contact._id);
+      }
+      catch (e) {
+        res.send("Error inserting contact: " + e);
+      }
+    }
+
+    else {
+      res.status(400).send("Contact is not formatted correctly.");
+    }
+  });
+
+  app.delete('/contacts', async function (req, res) {
+    //get contacts collection
+    const contacts = await client.db('contacts').collection('contacts');
+
+    if(req.query.id) {
+      const id = req.query.id;
+      const queryById = 
+      {
+        _id: ObjectId(id)
+      };
+      try {
+        contacts.deleteOne(queryById);
+        res.send("Contact successfully deleted");
+      }
+      catch(e) {
+        res.send("Error deleting contact: " + e);
+      }
+    }
+
+    else {
+      res.status(400).send("id query parameter required for PUT");
+    }
+  });
+
   app.listen(port, () => console.log('Started Server listening on port ' + port));
+}
+
+function validateContact(contact) {
+  if (typeof contact !== 'undefined' &&
+    typeof contact.firstName !== 'undefined' &&
+    typeof contact.lastName !== 'undefined' &&
+    typeof contact.email !== 'undefined' &&
+    typeof contact.favoriteColor !== 'undefined' &&
+    typeof contact.birthday !== 'undefined') {
+    return true;
+  }
+  else {
+    return false;
+  }
 }
 
 async function databaseConnect() {
