@@ -75,6 +75,18 @@ async function init() {
   });
 
   app.put('/contacts/:id', async function (req, res) {
+    /* #swagger.parameters['update-info'] = {
+      in: 'body',
+      schema: {
+        $firstName: 'John',
+        $lastName: 'Doe',
+        $email: 'jdoe@email.com',
+        $favoriteColor: 'purple',
+        $birthday: '1970-01-01'
+      }
+    }
+    */
+
     const contacts = await client.db('contacts').collection('contacts');
 
     //set operator needed for updateOne function
@@ -104,6 +116,17 @@ async function init() {
   });
 
   app.post('/contacts', async function (req, res) {
+    /* #swagger.parameters['add-info'] = {
+      in: 'body',
+      schema: {
+        $firstName: 'John',
+        $lastName: 'Doe',
+        $email: 'jdoe@email.com',
+        $favoriteColor: 'purple',
+        $birthday: '1970-01-01'
+      }
+    }
+    */
     //get contacts collection
     const contacts = await client.db('contacts').collection('contacts');
 
