@@ -15,6 +15,7 @@ server.listen(8080, "0.0.0.0", () => {
 //got help from this tutorial: https://www.mongodb.com/languages/express-mongodb-rest-api-tutorial
 //and this tutorial: https://www.mongodb.com/developer/languages/javascript/node-crud-tutorial/?_ga=2.265779529.7132876.1673902074-291492033.1672917402
 
+//set up dotenv and express
 require('dotenv').config();
 const express = require('express');
 const app = express();
@@ -23,23 +24,44 @@ const port = process.env.PORT || 8080;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+//set up mongodb
 const { MongoClient } = require('mongodb');
 const ObjectId = require('mongodb').ObjectId;
 
+//set up swagger-ui-express
+const swaggerUi = require('swagger-ui-express');
+const swaggerDoc = require('./swagger.json');
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 
 init();
 
 async function init() {
   const client = await databaseConnect();
 
-  app.get('/contacts', async function (req, res) {
+  app.get('/contacts/', async function (req, res) {
+    console.log("Correct");
+    //retrieve first 100 contacts
+    const contacts = await client.db('contacts').collection('contacts');
+    
+    try {
+      const result = await contacts.find({}).limit(100).toArray();
+      console.log(result);
+      res.status(200).json(result);
+    }
+    catch(e) {
+      res.status(400).send('Error getting contacts: ' + e);
+    }
+    
+  });
+
+  app.get('/contacts/:id', async function (req, res) {
     //get contacts collection
     const contacts = await client.db('contacts').collection('contacts');
 
     //retrieve particular document with this id
-    if (req.query.id) {
+    if (req.params.id) {
       console.log('id sent.');
-      const id = req.query.id;
+      const id = req.params.id;
 
       const foundDoc = await contacts
         .find({
@@ -48,27 +70,11 @@ async function init() {
         .toArray();
 
       console.log(foundDoc);
-      res.json(foundDoc);
-    }
-
-    //retrieve first 100 documents
-    else {
-      //get first 100 contacts
-
-      contacts
-        .find({})
-        .limit(100)
-        .toArray(function (error, result) {
-          if (error) {
-            res.status(400).send('Error getting contacts');
-          } else {
-            res.json(result);
-          }
-        });
+      res.status(200).json(foundDoc);
     }
   });
 
-  app.put('/contacts', async function (req, res) {
+  app.put('/contacts/:id', async function (req, res) {
     const contacts = await client.db('contacts').collection('contacts');
 
     //set operator needed for updateOne function
@@ -76,8 +82,8 @@ async function init() {
     const contactSet = { $set: req.body };
 
     if(/*validateContact(contact)*/true) {
-      if(req.query.id) {
-        const id = req.query.id;
+      if(req.params.id) {
+        const id = req.params.id;
         const queryById = 
         {
             _id: ObjectId(id)
@@ -88,7 +94,7 @@ async function init() {
           res.status(200).send("Contact successfully updated.");
         }
         catch (e) {
-          res.send("Error updating contact: " + e);
+          res.status(400).send("Error updating contact: " + e);
         }
       }
   
@@ -114,7 +120,7 @@ async function init() {
         res.status(201).json(contact._id);
       }
       catch (e) {
-        res.send("Error inserting contact: " + e);
+        res.status(400).send("Error inserting contact: " + e);
       }
     }
 
@@ -123,22 +129,22 @@ async function init() {
     }
   });
 
-  app.delete('/contacts', async function (req, res) {
+  app.delete('/contacts/:id', async function (req, res) {
     //get contacts collection
     const contacts = await client.db('contacts').collection('contacts');
 
-    if(req.query.id) {
-      const id = req.query.id;
+    if(req.params.id) {
+      const id = req.params.id;
       const queryById = 
       {
         _id: ObjectId(id)
       };
       try {
         contacts.deleteOne(queryById);
-        res.send("Contact successfully deleted");
+        res.status(200).send("Contact successfully deleted");
       }
       catch(e) {
-        res.send("Error deleting contact: " + e);
+        res.status(400).send("Error deleting contact: " + e);
       }
     }
 
