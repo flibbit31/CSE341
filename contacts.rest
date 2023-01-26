@@ -24,7 +24,7 @@ content-type: application/json
 }
 
 ### update contact by id
-PUT https://cse341-j0ct.onrender.com/contacts/63d2fced1771460e0bfdf530 
+PUT https://cse341-j0ct.onrender.com/contacts/63d3097d411c5ddcc45a3d96
 content-type: application/json
 
 {
@@ -32,7 +32,7 @@ content-type: application/json
     "lastName": "Doe",
     "email": "jdoe@email.com",
     "favoriteColor": "Purple",
-    "birthday": "1970-01-02"
+    "birthday": "1970-02-02"
 }
 
 ###delete contact with the queried id
