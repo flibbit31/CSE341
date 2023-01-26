@@ -81,33 +81,27 @@ async function init() {
     const contact = req.body;
     const contactSet = { $set: req.body };
 
-    if(/*validateContact(contact)*/true) {
-      if(req.params.id) {
-        const id = req.params.id;
-        const queryById = 
-        {
-            _id: ObjectId(id)
-        };
+    if(req.params.id) {
+      const id = req.params.id;
+      const queryById = 
+      {
+        _id: ObjectId(id)
+      };
 
-        try {
-          contacts.updateOne(queryById, contactSet);
-          res.status(200).send("Contact successfully updated.");
-        }
-        catch (e) {
-          res.status(400).send("Error updating contact: " + e);
-        }
+      try {
+        contacts.updateOne(queryById, contactSet);
+        res.status(200).send("Contact successfully updated.");
       }
-  
-      else {
-        res.status(400).send("id query parameter required for PUT");
+      catch (e) {
+        res.status(400).send("Error updating contact: " + e);
       }
     }
-
+  
     else {
-      res.status(400).send("Contact is not formatted correctly.");
+      res.status(400).send("id query parameter required for PUT");
     }
     
-  })
+  });
 
   app.post('/contacts', async function (req, res) {
     //get contacts collection
